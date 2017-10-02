@@ -3,7 +3,7 @@ from conexiones import *
 from socket import *
 def login(usuario,password):
 	respuesta="False\r \n"
-	consulta="Select 1 from Usuario where Usuario='"+usuario+"' and Password='"+password+"'"
+	consulta="Select 1 from Usuario where Usuario='"+usuario+"' and Contra='"+password+"'"
 	if consultaSQL(consulta):
 		respuesta="True\r \n"
 	return respuesta
@@ -21,9 +21,14 @@ def recibir_datos():
 		data = conn.recv(1024) #how many bytes of data will the server receive
 		#print "Se recibio la info: ", data
 		j = json.loads(data)
-		respuesta=login(j['usuario'],j['password'])
-		#reply = raw_input("Reply: ") #server's reply to the client
-		conn.send(respuesta)
-		conn.close()
-		break
+		if j['accion']=='login'
+			respuesta=login(j['usuario'],j['password'])
+			#reply = raw_input("Reply: ") #server's reply to the client
+			conn.send(respuesta)
+			conn.close()
+			break
+		else:
+			print "accion desconocida"
+			conn.send(respuesta)
+			conn.close()
 recibir_datos()

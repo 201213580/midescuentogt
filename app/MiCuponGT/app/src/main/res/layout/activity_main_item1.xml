@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="#fff"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/fech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#787878"
+        android:text="06/04/2017 01:32"
+        android:fontFamily="sans-serif-smallcaps"
+        android:layout_below="@+id/imagen1"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/conten"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tit"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="CONTENIDO DE LA NOTICIA"
+        android:textAlignment="center"
+        android:textColor="#787878"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/tit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="TITULO DE LA NOTICIA"
+        android:textAlignment="center"
+        android:textColor="#787878"
+        android:textSize="20dp"
+        android:layout_below="@+id/fech"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="Link Noticia"
+        android:textAlignment="center"
+        android:textColor="#e01a22"
+        android:textSize="20dp"
+        android:layout_below="@+id/conten"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/link"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:id="@+id/space" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/link"
+        android:layout_alignRight="@+id/link"
+        android:layout_alignTop="@+id/space"
+        android:id="@+id/space2" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/space"
+        android:layout_toLeftOf="@+id/link"
+        android:layout_toStartOf="@+id/link"
+        android:id="@+id/space3" />
+
+    <com.github.snowdream.android.widget.SmartImageView
+        android:id="@+id/imagen1"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/tit" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/link"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/space4" />
+
+
+</RelativeLayout>
