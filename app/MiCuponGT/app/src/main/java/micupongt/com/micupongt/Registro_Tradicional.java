@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.concurrent.ExecutionException;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -22,25 +23,18 @@ import io.socket.emitter.Emitter;
 public class Registro_Tradicional extends AppCompatActivity {
     TextView terminos;
     ImageView registrar;
-    EditText nombre,usuario,correo,contra;
-    private Socket socket;
-    {
-        try{
-            socket = IO.socket("http://192.168.0.13:9000");
-        }catch(URISyntaxException e){
-            throw new RuntimeException(e);
-        }
-    }
+    EditText nombre,usuario,correo,contra,contra2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro__tradicional);
         terminos=(TextView)findViewById(R.id.textView);
-        registrar=(ImageView)findViewById(R.id.imageView12);
+        registrar=(ImageView)findViewById(R.id.imageView14);
         nombre=(EditText)findViewById(R.id.editText6);
         usuario=(EditText)findViewById(R.id.editText7);
         correo=(EditText)findViewById(R.id.editText2);
         contra=(EditText)findViewById(R.id.editText9);
+        contra2=(EditText)findViewById(R.id.editText8);
         terminos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,47 +47,45 @@ public class Registro_Tradicional extends AppCompatActivity {
         registrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                socket.connect();
-                socket.on("registro",new Emitter.Listener() {
-                    @Override
-                    public void call(final Object... args) {
-                        Registro_Tradicional.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Boolean resultado = (Boolean) args[0];
-                                if(resultado){
-                                    Toast t = Toast.makeText(Registro_Tradicional.this,"Registro Completo",Toast.LENGTH_SHORT);
-                                    t.show();
-                                    startActivity(new Intent(getApplicationContext(), Lista.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
-                                    finish();
-                                    Toast t1 = Toast.makeText(Registro_Tradicional.this,"Bienvenido a MICUPONGT",Toast.LENGTH_SHORT);
-                                    t1.show();
-                                    socket.disconnect();
-                                    Intent inici = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(inici);
-                                    finish();
-                                }else{
-                                    Toast t = Toast.makeText(Registro_Tradicional.this,"No se Pudo Registrar Intente Nuevamente",Toast.LENGTH_SHORT);
-                                    t.show();
-                                    socket.disconnect();
-                                }
+                if(nombre.getText().toString().equals("")||usuario.getText().toString().equals("")||correo.getText().toString().equals("")||contra.getText().toString().equals("")||contra2.getText().toString().equals("")){
+                    Toast t = Toast.makeText(Registro_Tradicional.this,"Un Campo esta vacio",Toast.LENGTH_SHORT);
+                    t.show();
+                }else {
+                    if(contra.getText().toString().equals(contra2.getText().toString())){
+                        String respuesta="";
+                        try {
+                            Cone cone=new Cone();
+                            JSONObject datos =new JSONObject();
+                            datos.put("accion","registro");
+                            datos.put("nombre",nombre.getText().toString());
+                            datos.put("usuario",usuario.getText().toString());
+                            datos.put("correo",correo.getText().toString());
+                            datos.put("contra",contra.getText().toString());
+                            respuesta = cone.execute(datos).get();
+                            if(respuesta.equals("True")){
+                                Toast t = Toast.makeText(Registro_Tradicional.this,"Registro Exitoso",Toast.LENGTH_SHORT);
+                                t.show();
+                                finish();
+                                Intent i = new Intent(Registro_Tradicional.this, MainActivity.class);
+                                startActivity(i);
+                            }else{
+                                Toast t = Toast.makeText(Registro_Tradicional.this,respuesta,Toast.LENGTH_SHORT);
+                                t.show();
                             }
-                        });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        Toast t = Toast.makeText(Registro_Tradicional.this,"La Contraseña no es igual",Toast.LENGTH_SHORT);
+                        t.show();
+                        contra.setText("");
+                        contra2.setText("");
                     }
-                });
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("nombre",nombre.getText().toString());
-                    jsonObject.put("usuario",usuario.getText().toString());
-                    jsonObject.put("correo",correo.getText().toString());
-                    jsonObject.put("contra",contra.getText().toString());
-                    socket.emit("registro",jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d("JSONException",e.getMessage());
                 }
-
-                //conec.Conectar(usuario.getText().toString(),password.getText().toString());
             }
         });
     }

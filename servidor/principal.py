@@ -8,6 +8,23 @@ def login(usuario,password):
 		respuesta="True\r \n"
 	return respuesta
 
+def registro(nombre,usuario,correo,contra):
+	respuesta="False\r \n"
+	consulta="insert into usuario(Nombre,Usuario,Correo,Contra) values('"+nombre+"','"+usuario+"','"+correo+"','"+contra+"')"
+	verificar="Select 1 from usuario where Correo='"+correo+"'"
+	verificar2="Select 1 from usuario where Usuario='"+usuario+"'"
+	if consultaSQL(verificar):
+		print "Ya existe un usuario con ese correo"
+		respuesta="Ya existe un usuario con ese correo\r \n"
+	else:
+		if consultaSQL(verificar2):
+			print "Usuario no Disponible"
+			respuesta="Usuario no Disponible\r \n"
+		else:
+			if registroSQL(consulta):
+				respuesta="True\r \n"
+	return respuesta
+
 def recibir_datos():
 	HOST = "192.168.0.13" #local host
 	PORT = 7000 #open port 7000 for connection
@@ -23,7 +40,11 @@ def recibir_datos():
 		j = json.loads(data)
 		if j['accion']=="login":
 			respuesta=login(j['usuario'],j['password'])
-			#reply = raw_input("Reply: ") #server's reply to the client
+			print respuesta
+			conn.send(respuesta)
+			conn.close()
+		elif j['accion']=="registro":
+			respuesta=registro(j['nombre'],j['usuario'],j['correo'],j['contra'])
 			print respuesta
 			conn.send(respuesta)
 			conn.close()

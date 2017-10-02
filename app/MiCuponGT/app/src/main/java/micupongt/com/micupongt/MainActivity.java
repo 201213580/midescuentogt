@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         t.show();
                         Intent i = new Intent(MainActivity.this, Lista.class);
                         startActivity(i);
+                        finish();
                     }else{
                         Toast t = Toast.makeText(MainActivity.this,"Usuario/Password incorrectos. Intenta de Nuevo",Toast.LENGTH_SHORT);
                         t.show();
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 t.show();
                 Intent inici = new Intent(getApplicationContext(), Registro_Redes.class);
                 startActivity(inici);
+                finish();
             }
         });
     }

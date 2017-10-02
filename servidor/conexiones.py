@@ -10,3 +10,14 @@ def consultaSQL(consulta):
 		respuesta=True
 		cnx.close()
 	return respuesta
+
+def registroSQL(consulta):
+	respuesta=False
+	cnx = MySQLdb.connect(host='localhost', user='root', passwd='',
+		  db='micupongt')
+	cursor = cnx.cursor()
+	cursor.execute(consulta)
+	cnx.commit()
+	cnx.close()
+	respuesta=True
+	return respuesta
