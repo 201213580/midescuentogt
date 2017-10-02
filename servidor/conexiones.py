@@ -6,7 +6,7 @@ def consultaSQL(consulta):
 	cursor = cnx.cursor()
 	cursor.execute(consulta)
 	respuesta=cursor.fetchone()
-	if respuesta=='1'
+	if respuesta=='1':
 		respuesta=True
 		cnx.close()
 	return respuesta

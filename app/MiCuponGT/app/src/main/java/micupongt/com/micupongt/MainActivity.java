@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Cone cone=new Cone();
                     JSONObject datos =new JSONObject();
+                    datos.put("accion","login");
                     datos.put("usuario",usuario.getText().toString());
                     datos.put("password",password.getText().toString());
                     respuesta = cone.execute(datos).get();
