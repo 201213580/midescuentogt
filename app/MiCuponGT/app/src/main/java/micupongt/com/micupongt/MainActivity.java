@@ -56,6 +56,17 @@ public class MainActivity extends AppCompatActivity {
                     datos.put("usuario",usuario.getText().toString());
                     datos.put("password",password.getText().toString());
                     respuesta = cone.execute(datos).get();
+                    if(respuesta.equals("True")){
+                        Toast t = Toast.makeText(MainActivity.this,"Bienvenido "+usuario.getText().toString(),Toast.LENGTH_SHORT);
+                        t.show();
+                        Intent i = new Intent(MainActivity.this, Lista.class);
+                        startActivity(i);
+                    }else{
+                        Toast t = Toast.makeText(MainActivity.this,"Usuario/Password incorrectos. Intenta de Nuevo",Toast.LENGTH_SHORT);
+                        t.show();
+                        usuario.setText("");
+                        password.setText("");
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -63,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Toast t = Toast.makeText(MainActivity.this,respuesta.toString(),Toast.LENGTH_SHORT);
-                t.show();
+
             }
 
             }
