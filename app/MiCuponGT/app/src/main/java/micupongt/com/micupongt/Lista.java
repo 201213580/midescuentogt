@@ -3,6 +3,7 @@ package micupongt.com.micupongt;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -26,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.snowdream.android.widget.SmartImageView;
 import com.loopj.android.http.AsyncHttpClient;
@@ -85,6 +87,7 @@ public class Lista extends AppCompatActivity {
             }
         });
 
+
     }
 
 
@@ -103,12 +106,36 @@ public class Lista extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id== R.id.action_settings1) {
+            Toast t = Toast.makeText(Lista.this,"Terminos y Condiciones",Toast.LENGTH_SHORT);
+            t.show();
             return true;
+        }else if(id== R.id.action_settings){
+            Toast t = Toast.makeText(Lista.this,"Cerrando Sesion",Toast.LENGTH_SHORT);
+            t.show();
+            CerrarSesion();
+            return true;
+        }else{
+
         }
 
         return super.onOptionsItemSelected(item);
     }
+    public void CerrarSesion(){
+        ConexionLocal usdbh =new ConexionLocal(this, "DBUsuarios", null, 1);
+        SQLiteDatabase db = usdbh.getWritableDatabase();
+        if(db != null) {
+            db.execSQL("DELETE FROM Usuario where 1=1");
+            db.close();
+            Intent inici = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(inici);
+            finish();
+        }else{
+            Toast t = Toast.makeText(Lista.this,"No se logro abrir la base de datos local",Toast.LENGTH_SHORT);
+            t.show();
+        }
+    }
+
 
     /**
      * A placeholder fragment containing a simple view.

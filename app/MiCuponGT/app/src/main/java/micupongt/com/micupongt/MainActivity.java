@@ -1,6 +1,8 @@
 package micupongt.com.micupongt;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -41,43 +43,48 @@ public class MainActivity extends AppCompatActivity {
         crear=(ImageView)findViewById(R.id.imageView4);
         usuario=(EditText) findViewById(R.id.editText3);
         password=(EditText)findViewById(R.id.editText4);
+        if(VerificarSesion()){
+            Intent i = new Intent(MainActivity.this, Lista.class);
+            startActivity(i);
+            finish();
+        }
         inicio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(usuario.getText().toString().equals("")||password.getText().toString().equals("")){
-                Toast t = Toast.makeText(MainActivity.this,"Uno de los campos esta vacio",Toast.LENGTH_SHORT);
-                t.show();
-            }else{
-                String respuesta="";
-                try {
-                    Cone cone=new Cone();
-                    JSONObject datos =new JSONObject();
-                    datos.put("accion","login");
-                    datos.put("usuario",usuario.getText().toString());
-                    datos.put("password",password.getText().toString());
-                    respuesta = cone.execute(datos).get();
-                    if(respuesta.equals("True")){
-                        Toast t = Toast.makeText(MainActivity.this,"Bienvenido "+usuario.getText().toString(),Toast.LENGTH_SHORT);
-                        t.show();
-                        Intent i = new Intent(MainActivity.this, Lista.class);
-                        startActivity(i);
-                        finish();
-                    }else{
-                        Toast t = Toast.makeText(MainActivity.this,"Usuario/Password incorrectos. Intenta de Nuevo",Toast.LENGTH_SHORT);
-                        t.show();
-                        usuario.setText("");
-                        password.setText("");
+
+                if(usuario.getText().toString().equals("")||password.getText().toString().equals("")){
+                    Toast t = Toast.makeText(MainActivity.this,"Uno de los campos esta vacio",Toast.LENGTH_SHORT);
+                    t.show();
+                }else{
+                    String respuesta="";
+                    try {
+                        Cone cone=new Cone();
+                        JSONObject datos =new JSONObject();
+                        datos.put("accion","login");
+                        datos.put("usuario",usuario.getText().toString());
+                        datos.put("password",password.getText().toString());
+                        respuesta = cone.execute(datos).get();
+                        if(respuesta.equals("True")){
+                            CrearSesion();
+                            Toast t = Toast.makeText(MainActivity.this,"Bienvenid@ "+usuario.getText().toString(),Toast.LENGTH_SHORT);
+                            t.show();
+                            Intent i = new Intent(MainActivity.this, Lista.class);
+                            startActivity(i);
+                            finish();
+                        }else{
+                            Toast t = Toast.makeText(MainActivity.this,"Usuario/Password incorrectos. Intenta de Nuevo",Toast.LENGTH_SHORT);
+                            t.show();
+                            usuario.setText("");
+                            password.setText("");
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-
-            }
-
             }
         });
         olvido.setOnClickListener(new View.OnClickListener() {
@@ -98,5 +105,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    //private Emitter.Listener onAuthenticate =
+    public void CrearSesion(){
+        ConexionLocal usdbh =
+                new ConexionLocal(this, "DBUsuarios", null, 1);
+
+        SQLiteDatabase db = usdbh.getWritableDatabase();
+
+        //Si hemos abierto correctamente la base de datos
+        if(db != null) {
+            db.execSQL("INSERT INTO Usuario (usuario, password)VALUES ('" +usuario.getText().toString()+ "', '" +password.getText().toString() +"')");
+            db.close();
+        }else{
+            Toast t = Toast.makeText(MainActivity.this,"No se logro abrir la base de datos local",Toast.LENGTH_SHORT);
+            t.show();
+        }
+
+    }
+    public boolean VerificarSesion(){
+        boolean respuesta=false;
+        ConexionLocal usdbh =new ConexionLocal(this, "DBUsuarios", null, 1);
+        SQLiteDatabase db = usdbh.getWritableDatabase();
+        //Si hemos abierto correctamente la base de datos
+        if(db != null) {
+            Cursor c =db.rawQuery("SELECT * FROM Usuario",null);
+            if (c.moveToFirst()) {
+                //Recorremos el cursor hasta que no haya más registros
+                do {
+                    String usuario= c.getString(0);
+                    String password= c.getString(1);
+                    //Toast t = Toast.makeText(MainActivity.this,"Datos "+usuario+","+password,Toast.LENGTH_SHORT);
+                    //t.show();
+                    respuesta=true;
+                } while(c.moveToNext());
+            }
+
+            db.close();
+        }else{
+            Toast t = Toast.makeText(MainActivity.this,"No se logro abrir la base de datos local",Toast.LENGTH_SHORT);
+            t.show();
+        }
+        return respuesta;
+
+    }
 }

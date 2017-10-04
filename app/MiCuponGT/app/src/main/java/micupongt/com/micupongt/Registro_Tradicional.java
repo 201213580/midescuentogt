@@ -47,11 +47,11 @@ public class Registro_Tradicional extends AppCompatActivity {
         registrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(nombre.getText().toString().equals("")||usuario.getText().toString().equals("")||correo.getText().toString().equals("")||contra.getText().toString().equals("")||contra2.getText().toString().equals("")){
+                if(VerificarCampos()){
                     Toast t = Toast.makeText(Registro_Tradicional.this,"Un Campo esta vacio",Toast.LENGTH_SHORT);
                     t.show();
                 }else {
-                    if(contra.getText().toString().equals(contra2.getText().toString())){
+                    if(VerificarContra()){
                         String respuesta="";
                         try {
                             Cone cone=new Cone();
@@ -88,5 +88,19 @@ public class Registro_Tradicional extends AppCompatActivity {
                 }
             }
         });
+    }
+    public boolean VerificarContra(){
+        boolean respuesta=false;
+        if(contra.getText().toString().equals(contra2.getText().toString())){
+            respuesta=true;
+        }
+        return respuesta;
+    }
+    public boolean VerificarCampos(){
+        boolean respuesta=false;
+        if(nombre.getText().toString().equals("")||usuario.getText().toString().equals("")||correo.getText().toString().equals("")||contra.getText().toString().equals("")||contra2.getText().toString().equals("")){
+            respuesta=true;
+        }
+        return respuesta;
     }
 }
