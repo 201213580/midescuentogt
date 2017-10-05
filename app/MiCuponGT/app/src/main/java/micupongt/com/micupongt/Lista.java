@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Lista extends AppCompatActivity {
@@ -56,7 +57,38 @@ public class Lista extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     static ListView listaelementos;
+
     static ArrayList<Contenedor> elementos=new ArrayList<Contenedor>();
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        trimCache(getApplicationContext());
+    }
+    public static void trimCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            if (dir != null && dir.isDirectory()) {
+                deleteDir(dir);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        // The directory is now empty so delete it
+        return dir.delete();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,6 +207,7 @@ public class Lista extends AppCompatActivity {
                     startActivity(inici);
                 }
             });
+
             return rootView;
         }
         private void descargarInfo(){
@@ -242,6 +275,14 @@ public class Lista extends AppCompatActivity {
         public NoticiaAdapter(Context applicationContext) {
             this.ctx=applicationContext;
             layoutInflater=(LayoutInflater)ctx.getSystemService(LAYOUT_INFLATER_SERVICE);
+            //smartImageView.getContext().getCacheDir().delete();
+            String []nuevo=applicationContext.getCacheDir().list();
+            for(int i=0;i<nuevo.length;i++){
+                Toast t = Toast.makeText(applicationContext,nuevo[i].toString(),Toast.LENGTH_SHORT);
+                t.show();
+            }
+
+
         }
         @Override
         public int getCount() {
@@ -260,6 +301,7 @@ public class Lista extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            smartImageView=null;
             ViewGroup viewGroup=(ViewGroup)layoutInflater.inflate(R.layout.activity_main_item1,null);
             fecha_v=(TextView)viewGroup.findViewById(R.id.fech);
             titulo_v=(TextView)viewGroup.findViewById(R.id.tit);
@@ -271,20 +313,8 @@ public class Lista extends AppCompatActivity {
             noticia_v.setText(elementos.get(position).getNoticia().toString());
             ruta_v.setText("Generar Cupon");
             Rect rect=new Rect(smartImageView.getLeft(),smartImageView.getTop(),smartImageView.getRight(),smartImageView.getBottom());
-            String url=elementos.get(position).getImagen().toString();
-            if(position==0){
-                smartImageView.setImageRawId(R.mipmap.lacasadel,rect);
-            }else if(position==1){
-                smartImageView.setImageRawId(R.mipmap.pizza,rect);
-            }else if(position==2){
-                smartImageView.setImageRawId(R.mipmap.mega,rect);
-            }else if(position==3){
-                smartImageView.setImageRawId(R.mipmap.pollo,rect);
-            }else if(position==4){
-                smartImageView.setImageRawId(R.mipmap.descarga,rect);
-            }else if(position==5){
-                smartImageView.setImageRawId(R.mipmap.cafe,rect);
-            }
+            String url=elementos.get(position).getRuta().toString()+elementos.get(position).getImagen().toString();
+            smartImageView.setImageUrl(url,rect);
             return viewGroup;
         }
     }
