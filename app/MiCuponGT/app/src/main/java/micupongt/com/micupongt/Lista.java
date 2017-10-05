@@ -36,6 +36,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -54,12 +55,8 @@ public class Lista extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    static ArrayList fecha=new ArrayList();
-    static ArrayList titulo=new ArrayList();
-    static ArrayList noticia=new ArrayList();
-    static ArrayList ruta=new ArrayList();
-    static ArrayList imagen=new ArrayList();
     static ListView listaelementos;
+    static ArrayList<Contenedor> elementos=new ArrayList<Contenedor>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,10 +164,10 @@ public class Lista extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             View rootView = inflater.inflate(R.layout.fragment_lista, container, false);
             listaelementos=(ListView)rootView.findViewById(R.id.section_lista);
             descargarInfo();
-
             listaelementos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -180,44 +177,22 @@ public class Lista extends AppCompatActivity {
             });
             return rootView;
         }
-
         private void descargarInfo(){
-            fecha.clear();
-            titulo.clear();
-            noticia.clear();
-            ruta.clear();
-            imagen.clear();
-            fecha.add("10/06/2017");
-            titulo.add("Promocion 2x1");
-            noticia.add("La Casa del Agricultor");
-            ruta.add("Ruta de la imagen");
-            imagen.add("Imagen que va a ser procesada");
-            fecha.add("10/06/2017");
-            titulo.add("Promocion 2x1");
-            noticia.add("New York Pizza");
-            ruta.add("Ruta de la imagen");
-            imagen.add("Imagen que va a ser procesada");
-            fecha.add("11/06/2017");
-            titulo.add("Promocion 3x2");
-            noticia.add("MEGA-MART");
-            ruta.add("Ruta de la imagen");
-            imagen.add("Imagen que va a ser procesada");
-            fecha.add("14/06/2017");
-            titulo.add("25% Descuento");
-            noticia.add("Pollo Dorado");
-            ruta.add("Ruta de la imagen");
-            imagen.add("Imagen que va a ser procesada");
-            fecha.add("11/06/2017");
-            titulo.add("Promocion Alitas");
-            noticia.add("Pollo Campero");
-            ruta.add("Ruta de la imagen");
-            imagen.add("Imagen que va a ser procesada");
-            fecha.add("11/06/2017");
-            titulo.add("Promocion Desayuno");
-            noticia.add("You&Me");
-            ruta.add("Ruta de la imagen");
-            imagen.add("Imagen que va a ser procesada");
+            elementos.clear();
+            try{
+                Cone conexion=new Cone();
+                JSONObject datos =new JSONObject();
+                datos.put("accion","cargar");
+                String respuesta = conexion.execute(datos).get();
+                String [] lista=respuesta.split("-");
+                for(int i=1;i<lista.length;i++){
+                    JSONObject object = new JSONObject(lista[i].toString());
+                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"));
+                    elementos.add(elemento1);
+                }
+            }catch(Exception e){
 
+            }
             listaelementos.setAdapter(new NoticiaAdapter(getContext()));
         }
     }
@@ -270,7 +245,7 @@ public class Lista extends AppCompatActivity {
         }
         @Override
         public int getCount() {
-            return fecha.size();
+            return elementos.size();
         }
 
         @Override
@@ -291,12 +266,12 @@ public class Lista extends AppCompatActivity {
             noticia_v=(TextView)viewGroup.findViewById(R.id.conten);
             ruta_v=(TextView)viewGroup.findViewById(R.id.link);
             smartImageView=(SmartImageView)viewGroup.findViewById(R.id.imagen1);
-            fecha_v.setText(fecha.get(position).toString());
-            titulo_v.setText(titulo.get(position).toString());
-            noticia_v.setText(noticia.get(position).toString());
+            fecha_v.setText(elementos.get(position).getFecha().toString());
+            titulo_v.setText(elementos.get(position).getTitulo().toString());
+            noticia_v.setText(elementos.get(position).getNoticia().toString());
             ruta_v.setText("Generar Cupon");
             Rect rect=new Rect(smartImageView.getLeft(),smartImageView.getTop(),smartImageView.getRight(),smartImageView.getBottom());
-            String url=imagen.get(position).toString();
+            String url=elementos.get(position).getImagen().toString();
             if(position==0){
                 smartImageView.setImageRawId(R.mipmap.lacasadel,rect);
             }else if(position==1){

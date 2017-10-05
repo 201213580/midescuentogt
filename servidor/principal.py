@@ -1,6 +1,7 @@
 import json
 from conexiones import *
 from socket import *
+
 def login(usuario,password):
 	respuesta="False\r \n"
 	consulta="Select 1 from usuario where Usuario='"+usuario+"' and Contra='"+password+"'"
@@ -24,7 +25,17 @@ def registro(nombre,usuario,correo,contra):
 			if registroSQL(consulta):
 				respuesta="True\r \n"
 	return respuesta
-
+def cargar():
+	consulta="select * from promocion"
+	respuesta=consultaPromociones(consulta) 
+	row = respuesta.fetchone()
+	my_json_string="Cabecera"
+	while row is not None:
+		my_json_string =my_json_string+"-"+ json.dumps({'fecha': row[1], 'titulo': row[2], 'contenido': row[3], 'ruta': row[4], 'imagen': row[5]})
+  		#print(row)
+  		row = respuesta.fetchone()
+	#print my_json_string+"\r \n"
+	return my_json_string
 def recibir_datos():
 	HOST = "192.168.0.13" #local host
 	PORT = 7000 #open port 7000 for connection
@@ -45,6 +56,11 @@ def recibir_datos():
 			conn.close()
 		elif j['accion']=="registro":
 			respuesta=registro(j['nombre'],j['usuario'],j['correo'],j['contra'])
+			print respuesta
+			conn.send(respuesta)
+			conn.close()
+		elif j['accion']=="cargar":
+			respuesta=cargar()
 			print respuesta
 			conn.send(respuesta)
 			conn.close()
