@@ -199,12 +199,38 @@ public class Lista extends AppCompatActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_lista, container, false);
             listaelementos=(ListView)rootView.findViewById(R.id.section_lista);
-            descargarInfo();
+            switch ( getArguments().getInt( ARG_SECTION_NUMBER ) )
+            {
+                case 1:
+                    descargarInfo();
+                    Toast t = Toast.makeText(getContext(),"Case 1",Toast.LENGTH_SHORT);
+                    t.show();
+                    break;
+                case 2:
+                    //descargarInfo();
+                    Toast t1 = Toast.makeText(getContext(),"Case 2",Toast.LENGTH_SHORT);
+                    t1.show();
+                    break;
+                case 3:
+                    //descargarInfo();
+                    Toast t2 = Toast.makeText(getContext(),"Case 3",Toast.LENGTH_SHORT);
+                    t2.show();
+                    break;
+                case 4:
+                    //descargarInfo();
+                    Toast t3 = Toast.makeText(getContext(),"Case 4",Toast.LENGTH_SHORT);
+                    t3.show();
+                    break;
+                default:
+                    break;
+            }
+
+
             listaelementos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent inici = new Intent(getContext(), Info.class);
-                    startActivity(inici);
+                    Toast t = Toast.makeText(getContext(),position,Toast.LENGTH_SHORT);
+                    t.show();
                 }
             });
 
