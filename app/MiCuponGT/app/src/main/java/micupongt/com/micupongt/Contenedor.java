@@ -6,13 +6,34 @@ public class Contenedor {
     String noticia;
     String ruta;
     String imagen;
-    public Contenedor(String fecha, String titulo, String noticia, String ruta, String imagen){
+    String empresa;
+    String direccion;
+    public Contenedor(String fecha, String titulo, String noticia, String ruta, String imagen,String empresa,String direccion){
         this.fecha=fecha;
         this.titulo=titulo;
         this.noticia=noticia;
         this.ruta=ruta;
         this.imagen=imagen;
+        this.empresa=empresa;
+        this.direccion=direccion;
     }
+
+    public String getEmpresa() {
+        return empresa;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setEmpresa(String empresa) {
+        this.empresa = empresa;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
     public String getFecha() {
         return fecha;
     }

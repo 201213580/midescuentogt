@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="micupongt.com.micupongt">
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +12,9 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,17 +27,21 @@
         <activity
             android:name=".Registro_Redes"
             android:screenOrientation="portrait" />
-        <activity android:name=".Registro_Tradicional" />
-        <activity android:name=".Terminos_Condiciones" />
+        <activity
+            android:name=".Registro_Tradicional"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Terminos_Condiciones"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Lista"
             android:label="@string/title_activity_lista"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Informacion" />
         <activity
-            android:name=".Info"
-            android:label="@string/title_activity_info"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".Informacion"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Contenido" />
     </application>
 
 </manifest>

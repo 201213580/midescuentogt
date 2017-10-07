@@ -203,34 +203,46 @@ public class Lista extends AppCompatActivity {
             {
                 case 1:
                     descargarInfo();
-                    Toast t = Toast.makeText(getContext(),"Case 1",Toast.LENGTH_SHORT);
-                    t.show();
+                    //Toast t = Toast.makeText(getContext(),"Case 1",Toast.LENGTH_SHORT);
+                    //t.show();
                     break;
                 case 2:
-                    //descargarInfo();
-                    Toast t1 = Toast.makeText(getContext(),"Case 2",Toast.LENGTH_SHORT);
-                    t1.show();
+                    descargarInfo();
+                    //Toast t1 = Toast.makeText(getContext(),"Case 2",Toast.LENGTH_SHORT);
+                    //t1.show();
                     break;
                 case 3:
-                    //descargarInfo();
-                    Toast t2 = Toast.makeText(getContext(),"Case 3",Toast.LENGTH_SHORT);
-                    t2.show();
-                    break;
-                case 4:
-                    //descargarInfo();
-                    Toast t3 = Toast.makeText(getContext(),"Case 4",Toast.LENGTH_SHORT);
-                    t3.show();
+                    descargarInfo();
+                    //Toast t2 = Toast.makeText(getContext(),"Case 3",Toast.LENGTH_SHORT);
+                    //t2.show();
                     break;
                 default:
+                    //Toast t4 = Toast.makeText(getContext(),"Default",Toast.LENGTH_SHORT);
+                    //t4.show();
                     break;
             }
 
 
             listaelementos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast t = Toast.makeText(getContext(),position,Toast.LENGTH_SHORT);
-                    t.show();
+                public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                    try{
+
+                        Intent i = new Intent(getContext(), Contenido.class);
+                        i.putExtra("fecha",elementos.get(position).getFecha().toString());
+                        i.putExtra("titulo",elementos.get(position).getTitulo().toString());
+                        i.putExtra("contenido",elementos.get(position).getNoticia().toString());
+                        i.putExtra("imagen",elementos.get(position).getRuta().toString()+elementos.get(position).getImagen().toString());
+                        i.putExtra("empresa",elementos.get(position).getEmpresa().toString());
+                        i.putExtra("direccion",elementos.get(position).getDireccion().toString());
+                        startActivity(i);
+                    }catch(Exception e){
+                        Toast t4 = Toast.makeText(getContext(),e.toString(),Toast.LENGTH_SHORT);
+                        t4.show();
+                    }
+
+
                 }
             });
 
@@ -243,10 +255,10 @@ public class Lista extends AppCompatActivity {
                 JSONObject datos =new JSONObject();
                 datos.put("accion","cargar");
                 String respuesta = conexion.execute(datos).get();
-                String [] lista=respuesta.split("-");
+                String [] lista=respuesta.split("~");
                 for(int i=1;i<lista.length;i++){
                     JSONObject object = new JSONObject(lista[i].toString());
-                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"));
+                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"));
                     elementos.add(elemento1);
                 }
             }catch(Exception e){
@@ -297,18 +309,10 @@ public class Lista extends AppCompatActivity {
         Context ctx;
         LayoutInflater layoutInflater;
         SmartImageView smartImageView;
-        TextView fecha_v,titulo_v,noticia_v,ruta_v;
+        TextView fecha_v,titulo_v,empresa_v,ruta_v;
         public NoticiaAdapter(Context applicationContext) {
             this.ctx=applicationContext;
             layoutInflater=(LayoutInflater)ctx.getSystemService(LAYOUT_INFLATER_SERVICE);
-            //smartImageView.getContext().getCacheDir().delete();
-            String []nuevo=applicationContext.getCacheDir().list();
-            for(int i=0;i<nuevo.length;i++){
-                Toast t = Toast.makeText(applicationContext,nuevo[i].toString(),Toast.LENGTH_SHORT);
-                t.show();
-            }
-
-
         }
         @Override
         public int getCount() {
@@ -331,12 +335,12 @@ public class Lista extends AppCompatActivity {
             ViewGroup viewGroup=(ViewGroup)layoutInflater.inflate(R.layout.activity_main_item1,null);
             fecha_v=(TextView)viewGroup.findViewById(R.id.fech);
             titulo_v=(TextView)viewGroup.findViewById(R.id.tit);
-            noticia_v=(TextView)viewGroup.findViewById(R.id.conten);
             ruta_v=(TextView)viewGroup.findViewById(R.id.link);
+            empresa_v=(TextView)viewGroup.findViewById(R.id.empresa);
             smartImageView=(SmartImageView)viewGroup.findViewById(R.id.imagen1);
             fecha_v.setText(elementos.get(position).getFecha().toString());
             titulo_v.setText(elementos.get(position).getTitulo().toString());
-            noticia_v.setText(elementos.get(position).getNoticia().toString());
+            empresa_v.setText(elementos.get(position).getEmpresa().toString());
             ruta_v.setText("Generar Cupon");
             Rect rect=new Rect(smartImageView.getLeft(),smartImageView.getTop(),smartImageView.getRight(),smartImageView.getBottom());
             String url=elementos.get(position).getRuta().toString()+elementos.get(position).getImagen().toString();

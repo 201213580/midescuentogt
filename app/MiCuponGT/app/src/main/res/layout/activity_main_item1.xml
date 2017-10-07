@@ -9,23 +9,13 @@
         android:id="@+id/fech"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#787878"
+        android:textColor="#07445e"
         android:text="06/04/2017 01:32"
+        android:textSize="12dp"
         android:fontFamily="sans-serif-smallcaps"
-        android:layout_below="@+id/imagen1"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/conten"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tit"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="CONTENIDO DE LA NOTICIA"
-        android:textAlignment="center"
-        android:textColor="#787878"
-        android:textSize="15dp" />
+        android:layout_alignRight="@+id/space2"
+        android:layout_alignEnd="@+id/space2"
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:id="@+id/tit"
@@ -34,10 +24,14 @@
         android:fontFamily="sans-serif-smallcaps"
         android:text="TITULO DE LA NOTICIA"
         android:textAlignment="center"
-        android:textColor="#787878"
-        android:textSize="20dp"
+        android:textColor="#07445e"
+        android:textSize="17dp"
         android:layout_below="@+id/fech"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@+id/imagen1"
+        android:layout_toEndOf="@+id/imagen1" />
 
     <TextView
         android:id="@+id/link"
@@ -47,10 +41,13 @@
         android:text="Link Noticia"
         android:textAlignment="center"
         android:textColor="#e01a22"
-        android:textSize="20dp"
-        android:layout_below="@+id/conten"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:textSize="17dp"
+        android:layout_below="@+id/tit"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@+id/imagen1"
+        android:layout_toEndOf="@+id/imagen1" />
 
     <Space
         android:layout_width="wrap_content"
@@ -68,24 +65,18 @@
         android:layout_alignTop="@+id/space"
         android:id="@+id/space2" />
 
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/space"
-        android:layout_toLeftOf="@+id/link"
-        android:layout_toStartOf="@+id/link"
-        android:id="@+id/space3" />
+
 
     <com.github.snowdream.android.widget.SmartImageView
         android:id="@+id/imagen1"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/tit" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/textView9"
+        android:layout_alignEnd="@+id/textView9"
+        android:layout_above="@+id/textView9" />
 
     <Space
         android:layout_width="wrap_content"
@@ -93,6 +84,29 @@
         android:layout_below="@+id/link"
         android:layout_centerHorizontal="true"
         android:id="@+id/space4" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="                                "
+        android:layout_alignBottom="@+id/space4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/link" />
+
+    <TextView
+        android:id="@+id/empresa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Empresa"
+        android:textColor="#07445e"
+        android:textSize="15dp"
+        android:textAlignment="center"
+        android:layout_below="@+id/tit"
+        android:layout_toRightOf="@+id/imagen1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

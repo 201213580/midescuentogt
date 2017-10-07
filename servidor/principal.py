@@ -31,7 +31,7 @@ def cargar():
 	row = respuesta.fetchone()
 	my_json_string="Cabecera"
 	while row is not None:
-		my_json_string =my_json_string+"-"+ json.dumps({'fecha': row[1], 'titulo': row[2], 'contenido': row[3], 'ruta': row[4], 'imagen': row[5]})
+		my_json_string =my_json_string+"~"+ json.dumps({'fecha': row[1], 'titulo': row[2], 'contenido': row[3], 'ruta': row[4], 'imagen': row[5], 'empresa': row[6], 'direccion': row[7]})
   		#print(row)
   		row = respuesta.fetchone()
 	#print my_json_string+"\r \n"
