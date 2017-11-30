@@ -309,7 +309,7 @@ public class Lista extends AppCompatActivity {
         Context ctx;
         LayoutInflater layoutInflater;
         SmartImageView smartImageView;
-        TextView fecha_v,titulo_v,empresa_v,ruta_v;
+        //TextView fecha_v,titulo_v,empresa_v,ruta_v;
         public NoticiaAdapter(Context applicationContext) {
             this.ctx=applicationContext;
             layoutInflater=(LayoutInflater)ctx.getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -333,15 +333,15 @@ public class Lista extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             smartImageView=null;
             ViewGroup viewGroup=(ViewGroup)layoutInflater.inflate(R.layout.activity_main_item1,null);
-            fecha_v=(TextView)viewGroup.findViewById(R.id.fech);
-            titulo_v=(TextView)viewGroup.findViewById(R.id.tit);
-            ruta_v=(TextView)viewGroup.findViewById(R.id.link);
-            empresa_v=(TextView)viewGroup.findViewById(R.id.empresa);
+            //fecha_v=(TextView)viewGroup.findViewById(R.id.fech);
+            //titulo_v=(TextView)viewGroup.findViewById(R.id.tit);
+            //ruta_v=(TextView)viewGroup.findViewById(R.id.link);
+            //empresa_v=(TextView)viewGroup.findViewById(R.id.empresa);
             smartImageView=(SmartImageView)viewGroup.findViewById(R.id.imagen1);
-            fecha_v.setText(elementos.get(position).getFecha().toString());
-            titulo_v.setText(elementos.get(position).getTitulo().toString());
-            empresa_v.setText(elementos.get(position).getEmpresa().toString());
-            ruta_v.setText("Generar Cupon");
+            //fecha_v.setText(elementos.get(position).getFecha().toString());
+            //titulo_v.setText(elementos.get(position).getTitulo().toString());
+            //empresa_v.setText(elementos.get(position).getEmpresa().toString());
+            //ruta_v.setText("Generar Cupon");
             Rect rect=new Rect(smartImageView.getLeft(),smartImageView.getTop(),smartImageView.getRight(),smartImageView.getBottom());
             String url=elementos.get(position).getRuta().toString()+elementos.get(position).getImagen().toString();
             smartImageView.setImageUrl(url,rect);
