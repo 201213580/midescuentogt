@@ -8,7 +8,9 @@ public class Contenedor {
     String imagen;
     String empresa;
     String direccion;
-    public Contenedor(String fecha, String titulo, String noticia, String ruta, String imagen,String empresa,String direccion){
+    String codigo;
+    String imagen2;
+    public Contenedor(String fecha, String titulo, String noticia, String ruta, String imagen,String empresa,String direccion,String codigo,String imagen2){
         this.fecha=fecha;
         this.titulo=titulo;
         this.noticia=noticia;
@@ -16,6 +18,23 @@ public class Contenedor {
         this.imagen=imagen;
         this.empresa=empresa;
         this.direccion=direccion;
+        this.codigo=codigo;
+        this.imagen2=imagen2;
+    }
+    public String getImagen2() {
+        return imagen2;
+    }
+
+    public void setImagen2(String imagen2) {
+        this.imagen2 = imagen2;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getEmpresa() {

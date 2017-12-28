@@ -1,14 +1,19 @@
 package micupongt.com.micupongt;
 
+import android.app.Dialog;
+import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView inicio,olvido,crear;
     EditText usuario;
     EditText password;
+    String mandar_usuario;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         inicio=(ImageView)findViewById(R.id.imageView2);
@@ -51,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         inicio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(usuario.getText().toString().equals("")||password.getText().toString().equals("")){
                     Toast t = Toast.makeText(MainActivity.this,"Uno de los campos esta vacio",Toast.LENGTH_SHORT);
                     t.show();
@@ -90,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
         olvido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent inici = new Intent(getApplicationContext(), recuperar.class);
-                startActivity(inici);
+                Dialogo_Recuperar recuperar=new Dialogo_Recuperar();
+                recuperar.show(getFragmentManager(),"TAg");
+
             }
         });
         crear.setOnClickListener(new View.OnClickListener() {
@@ -131,20 +137,18 @@ public class MainActivity extends AppCompatActivity {
             if (c.moveToFirst()) {
                 //Recorremos el cursor hasta que no haya más registros
                 do {
-                    String usuario= c.getString(0);
-                    String password= c.getString(1);
-                    //Toast t = Toast.makeText(MainActivity.this,"Datos "+usuario+","+password,Toast.LENGTH_SHORT);
-                    //t.show();
+                    mandar_usuario= c.getString(0);
                     respuesta=true;
                 } while(c.moveToNext());
             }
-
             db.close();
         }else{
             Toast t = Toast.makeText(MainActivity.this,"No se logro abrir la base de datos local",Toast.LENGTH_SHORT);
             t.show();
         }
         return respuesta;
-
     }
+
+
 }
+

@@ -3,6 +3,7 @@ package micupongt.com.micupongt;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -57,9 +58,8 @@ public class Lista extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     static ListView listaelementos;
-
     static ArrayList<Contenedor> elementos=new ArrayList<Contenedor>();
-
+    public String usuario_sesion;
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -92,14 +92,13 @@ public class Lista extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista);
 
+        setContentView(R.layout.activity_lista);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -199,36 +198,28 @@ public class Lista extends AppCompatActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_lista, container, false);
             listaelementos=(ListView)rootView.findViewById(R.id.section_lista);
-            switch ( getArguments().getInt( ARG_SECTION_NUMBER ) )
-            {
+            switch(getArguments().getInt( ARG_SECTION_NUMBER )){
                 case 1:
                     descargarInfo();
-                    //Toast t = Toast.makeText(getContext(),"Case 1",Toast.LENGTH_SHORT);
-                    //t.show();
+                    Toast t = Toast.makeText(getContext(),ARG_SECTION_NUMBER,Toast.LENGTH_SHORT);
+                    t.show();
                     break;
                 case 2:
-                    descargarInfo();
-                    //Toast t1 = Toast.makeText(getContext(),"Case 2",Toast.LENGTH_SHORT);
-                    //t1.show();
+                    descargarDescuentos();
+                    Toast t1 = Toast.makeText(getContext(),ARG_SECTION_NUMBER,Toast.LENGTH_SHORT);
+                    t1.show();
                     break;
                 case 3:
-                    descargarInfo();
-                    //Toast t2 = Toast.makeText(getContext(),"Case 3",Toast.LENGTH_SHORT);
-                    //t2.show();
-                    break;
-                default:
-                    //Toast t4 = Toast.makeText(getContext(),"Default",Toast.LENGTH_SHORT);
-                    //t4.show();
+                    descargarPromociones();
+                    Toast t2 = Toast.makeText(getContext(),ARG_SECTION_NUMBER,Toast.LENGTH_SHORT);
+                    t2.show();
                     break;
             }
-
-
             listaelementos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                     try{
-
                         Intent i = new Intent(getContext(), Contenido.class);
                         i.putExtra("fecha",elementos.get(position).getFecha().toString());
                         i.putExtra("titulo",elementos.get(position).getTitulo().toString());
@@ -236,17 +227,33 @@ public class Lista extends AppCompatActivity {
                         i.putExtra("imagen",elementos.get(position).getRuta().toString()+elementos.get(position).getImagen().toString());
                         i.putExtra("empresa",elementos.get(position).getEmpresa().toString());
                         i.putExtra("direccion",elementos.get(position).getDireccion().toString());
+                        i.putExtra("codigo",elementos.get(position).getCodigo().toString());
+                        i.putExtra("imagen2",elementos.get(position).getRuta().toString()+elementos.get(position).getImagen2().toString());
                         startActivity(i);
                     }catch(Exception e){
                         Toast t4 = Toast.makeText(getContext(),e.toString(),Toast.LENGTH_SHORT);
                         t4.show();
                     }
-
-
                 }
             });
-
             return rootView;
+        }
+        public String VerificarSesion(){
+            String respuesta="";
+            ConexionLocal usdbh =new ConexionLocal(getContext(), "DBUsuarios", null, 1);
+            SQLiteDatabase db = usdbh.getWritableDatabase();
+            //Si hemos abierto correctamente la base de datos
+            if(db != null) {
+                Cursor c =db.rawQuery("SELECT * FROM Usuario",null);
+                if (c.moveToFirst()) {
+                    //Recorremos el cursor hasta que no haya más registros
+                    do {
+                        respuesta= c.getString(0);
+                    } while(c.moveToNext());
+                }
+                db.close();
+            }
+            return respuesta;
         }
         private void descargarInfo(){
             elementos.clear();
@@ -254,15 +261,53 @@ public class Lista extends AppCompatActivity {
                 Cone conexion=new Cone();
                 JSONObject datos =new JSONObject();
                 datos.put("accion","cargar");
+                datos.put("usu_sesion",VerificarSesion());
                 String respuesta = conexion.execute(datos).get();
                 String [] lista=respuesta.split("~");
                 for(int i=1;i<lista.length;i++){
                     JSONObject object = new JSONObject(lista[i].toString());
-                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"));
+                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"),object.getString("codigo"),object.getString("imagen2"));
                     elementos.add(elemento1);
                 }
             }catch(Exception e){
-
+            }
+            listaelementos.setAdapter(new NoticiaAdapter(getContext()));
+        }
+        private void descargarDescuentos(){
+            elementos.clear();
+            try{
+                Cone conexion=new Cone();
+                JSONObject datos =new JSONObject();
+                datos.put("accion","carga_contenido");
+                datos.put("usu_sesion",VerificarSesion());
+                datos.put("tipo","1");
+                String respuesta = conexion.execute(datos).get();
+                String [] lista=respuesta.split("~");
+                for(int i=1;i<lista.length;i++){
+                    JSONObject object = new JSONObject(lista[i].toString());
+                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"),object.getString("codigo"),object.getString("imagen2"));
+                    elementos.add(elemento1);
+                }
+            }catch(Exception e){
+            }
+            listaelementos.setAdapter(new NoticiaAdapter(getContext()));
+        }
+        private void descargarPromociones(){
+            elementos.clear();
+            try{
+                Cone conexion=new Cone();
+                JSONObject datos =new JSONObject();
+                datos.put("accion","carga_contenido");
+                datos.put("usu_sesion",VerificarSesion());
+                datos.put("tipo","2");
+                String respuesta = conexion.execute(datos).get();
+                String [] lista=respuesta.split("~");
+                for(int i=1;i<lista.length;i++){
+                    JSONObject object = new JSONObject(lista[i].toString());
+                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"),object.getString("codigo"),object.getString("imagen2"));
+                    elementos.add(elemento1);
+                }
+            }catch(Exception e){
             }
             listaelementos.setAdapter(new NoticiaAdapter(getContext()));
         }
@@ -297,9 +342,9 @@ public class Lista extends AppCompatActivity {
                 case 0:
                     return "Todos los Cupones";
                 case 1:
-                    return "Cupones del Dia";
+                    return "Descuentos";
                 case 2:
-                    return "Mis Cupones";
+                    return "Promociones";
             }
             return null;
         }

@@ -24,7 +24,8 @@ public class Cone extends AsyncTask<JSONObject,Void,String> {
         String respuesta="nada";
         try{
             try{
-                Socket socket=new Socket("192.168.1.37",7000);
+                //Socket socket=new Socket("190.148.250.130",7000);
+                Socket socket=new Socket("192.168.0.13",7000);
                 PrintWriter pw = new PrintWriter(socket.getOutputStream(),true);
                 // Send first message - Message is being correctly received
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
