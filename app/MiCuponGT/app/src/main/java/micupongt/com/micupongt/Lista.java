@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +21,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +35,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.snowdream.android.widget.SmartImageView;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -41,25 +54,15 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
-public class Lista extends AppCompatActivity {
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
-    static ListView listaelementos;
-    static ArrayList<Contenedor> elementos=new ArrayList<Contenedor>();
+public class Lista extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     public String usuario_sesion;
+    private static final String TAG = "MainActivity";
+    private SectionsPageAdapter mSectionsPageAdapter;
+    private ViewPager mViewPager;
+    private GoogleApiClient googleApiClient;
+    public static GoogleSignInAccount account;
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -75,7 +78,6 @@ public class Lista extends AppCompatActivity {
             // TODO: handle exception
         }
     }
-
     public static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
@@ -86,68 +88,172 @@ public class Lista extends AppCompatActivity {
                 }
             }
         }
-        // The directory is now empty so delete it
         return dir.delete();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_lista);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        if(Verificar_Red()){
+            setContentView(R.layout.activity_lista);
+            try{
+                GoogleSignInOptions gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .build();
+                googleApiClient=new GoogleApiClient.Builder(this)
+                        .enableAutoManage(this,this)
+                        .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                        .build();
+            }catch(Exception e){
+                Toast t = Toast.makeText(Lista.this,"El servicio no esta disponible temporalmente",Toast.LENGTH_SHORT);
+                t.show();
+            }
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }else{
+            Toast t = Toast.makeText(Lista.this,"Por favor verifique su conexion a internet",Toast.LENGTH_LONG);
+            t.show();
+            finish();
+        }
+    }
+    public boolean Verificar_Red(){
+        ConnectivityManager cm;
+        NetworkInfo ni;
+        cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ni = cm.getActiveNetworkInfo();
+        boolean respuesta = false;
+        if (ni != null) {
+            ConnectivityManager connManager1 = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mWifi = connManager1.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            ConnectivityManager connManager2 = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mMobile = connManager2.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (mWifi.isConnected()) {
+                respuesta = true;
+            }
+            if (mMobile.isConnected()) {
+                respuesta = true;
+            }
+        }
+        return respuesta;
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        OptionalPendingResult<GoogleSignInResult>opr=Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        if(opr.isDone()){
+            GoogleSignInResult result=opr.get();
+            handleSignInResult(result);
+        }else{
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
+    private void handleSignInResult(GoogleSignInResult result) {
+        if(result.isSuccess()){
+            account=result.getSignInAccount();
+            try {
+                String respuesta="";
+                Cone cone=new Cone();
+                JSONObject datos =new JSONObject();
+                datos.put("accion","registro");
+                datos.put("nombre",account.getDisplayName().toString());
+                datos.put("usuario",account.getEmail().toString());
+                datos.put("correo",account.getEmail().toString());
+                datos.put("contra",account.getId().toString());
+                datos.put("tipo","gmail");
+                respuesta = cone.execute(datos).get();
+                Toast t = Toast.makeText(Lista.this,"Bienvenido "+account.getDisplayName(),Toast.LENGTH_SHORT);
+                t.show();
+                mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
+                // Set up the ViewPager with the sections adapter.
+                mViewPager = (ViewPager) findViewById(R.id.container);
+                setupViewPager(mViewPager);
+                TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+                tabLayout.setupWithViewPager(mViewPager);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            goLogInScreen();
+        }
+    }
+    private void goLogInScreen() {
+        Intent i = new Intent(this,MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+    public void logOut(){
+        Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onResult(@NonNull Status status) {
+                if(status.isSuccess()){
+                    goLogInScreen();
+                }else{
+                    //Toast.makeText(getApplicationContext(),"No se pudo cerrar sesion logout",Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
-
     }
-
-
+    public void revoke(){
+        Auth.GoogleSignInApi.revokeAccess(googleApiClient).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(@NonNull Status status) {
+                if(status.isSuccess()){
+                    goLogInScreen();
+                }else{
+                    //Toast.makeText(getApplicationContext(),"No se pudo cerrar sesion revoke",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_lista, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        String terminos="Terminos y Condiciones";
         //noinspection SimplifiableIfStatement
         if (id== R.id.action_settings1) {
             Toast t = Toast.makeText(Lista.this,"Terminos y Condiciones",Toast.LENGTH_SHORT);
             t.show();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            DialogoAlerta dialogo = new DialogoAlerta();
+            dialogo.setMensaje(terminos);
+            dialogo.show(fragmentManager, "tagAlerta");
             return true;
         }else if(id== R.id.action_settings){
             Toast t = Toast.makeText(Lista.this,"Cerrando Sesion",Toast.LENGTH_SHORT);
             t.show();
-            CerrarSesion();
+            revoke();
+            logOut();
             return true;
         }else{
-
         }
-
         return super.onOptionsItemSelected(item);
+    }
+    private void setupViewPager(ViewPager viewPager) {
+        SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
+        Fragment1 fragment1=new Fragment1(account.getEmail().toString());
+        Fragment2 fragment2=new Fragment2(account.getEmail().toString());
+        Fragment3 fragment3=new Fragment3(account.getEmail().toString());
+        adapter.addFragment(fragment1, "General");
+        adapter.addFragment(fragment2, "Ofertas");
+        adapter.addFragment(fragment3, "Descuentos");
+        viewPager.setAdapter(adapter);
     }
     public void CerrarSesion(){
         ConexionLocal usdbh =new ConexionLocal(this, "DBUsuarios", null, 1);
@@ -164,233 +270,9 @@ public class Lista extends AppCompatActivity {
         }
     }
 
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-
-            View rootView = inflater.inflate(R.layout.fragment_lista, container, false);
-            listaelementos=(ListView)rootView.findViewById(R.id.section_lista);
-            switch(getArguments().getInt( ARG_SECTION_NUMBER )){
-                case 1:
-                    descargarInfo();
-                    Toast t = Toast.makeText(getContext(),ARG_SECTION_NUMBER,Toast.LENGTH_SHORT);
-                    t.show();
-                    break;
-                case 2:
-                    descargarDescuentos();
-                    Toast t1 = Toast.makeText(getContext(),ARG_SECTION_NUMBER,Toast.LENGTH_SHORT);
-                    t1.show();
-                    break;
-                case 3:
-                    descargarPromociones();
-                    Toast t2 = Toast.makeText(getContext(),ARG_SECTION_NUMBER,Toast.LENGTH_SHORT);
-                    t2.show();
-                    break;
-            }
-            listaelementos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                    try{
-                        Intent i = new Intent(getContext(), Contenido.class);
-                        i.putExtra("fecha",elementos.get(position).getFecha().toString());
-                        i.putExtra("titulo",elementos.get(position).getTitulo().toString());
-                        i.putExtra("contenido",elementos.get(position).getNoticia().toString());
-                        i.putExtra("imagen",elementos.get(position).getRuta().toString()+elementos.get(position).getImagen().toString());
-                        i.putExtra("empresa",elementos.get(position).getEmpresa().toString());
-                        i.putExtra("direccion",elementos.get(position).getDireccion().toString());
-                        i.putExtra("codigo",elementos.get(position).getCodigo().toString());
-                        i.putExtra("imagen2",elementos.get(position).getRuta().toString()+elementos.get(position).getImagen2().toString());
-                        startActivity(i);
-                    }catch(Exception e){
-                        Toast t4 = Toast.makeText(getContext(),e.toString(),Toast.LENGTH_SHORT);
-                        t4.show();
-                    }
-                }
-            });
-            return rootView;
-        }
-        public String VerificarSesion(){
-            String respuesta="";
-            ConexionLocal usdbh =new ConexionLocal(getContext(), "DBUsuarios", null, 1);
-            SQLiteDatabase db = usdbh.getWritableDatabase();
-            //Si hemos abierto correctamente la base de datos
-            if(db != null) {
-                Cursor c =db.rawQuery("SELECT * FROM Usuario",null);
-                if (c.moveToFirst()) {
-                    //Recorremos el cursor hasta que no haya más registros
-                    do {
-                        respuesta= c.getString(0);
-                    } while(c.moveToNext());
-                }
-                db.close();
-            }
-            return respuesta;
-        }
-        private void descargarInfo(){
-            elementos.clear();
-            try{
-                Cone conexion=new Cone();
-                JSONObject datos =new JSONObject();
-                datos.put("accion","cargar");
-                datos.put("usu_sesion",VerificarSesion());
-                String respuesta = conexion.execute(datos).get();
-                String [] lista=respuesta.split("~");
-                for(int i=1;i<lista.length;i++){
-                    JSONObject object = new JSONObject(lista[i].toString());
-                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"),object.getString("codigo"),object.getString("imagen2"));
-                    elementos.add(elemento1);
-                }
-            }catch(Exception e){
-            }
-            listaelementos.setAdapter(new NoticiaAdapter(getContext()));
-        }
-        private void descargarDescuentos(){
-            elementos.clear();
-            try{
-                Cone conexion=new Cone();
-                JSONObject datos =new JSONObject();
-                datos.put("accion","carga_contenido");
-                datos.put("usu_sesion",VerificarSesion());
-                datos.put("tipo","1");
-                String respuesta = conexion.execute(datos).get();
-                String [] lista=respuesta.split("~");
-                for(int i=1;i<lista.length;i++){
-                    JSONObject object = new JSONObject(lista[i].toString());
-                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"),object.getString("codigo"),object.getString("imagen2"));
-                    elementos.add(elemento1);
-                }
-            }catch(Exception e){
-            }
-            listaelementos.setAdapter(new NoticiaAdapter(getContext()));
-        }
-        private void descargarPromociones(){
-            elementos.clear();
-            try{
-                Cone conexion=new Cone();
-                JSONObject datos =new JSONObject();
-                datos.put("accion","carga_contenido");
-                datos.put("usu_sesion",VerificarSesion());
-                datos.put("tipo","2");
-                String respuesta = conexion.execute(datos).get();
-                String [] lista=respuesta.split("~");
-                for(int i=1;i<lista.length;i++){
-                    JSONObject object = new JSONObject(lista[i].toString());
-                    Contenedor elemento1=new Contenedor(object.getString("fecha"),object.getString("titulo"),object.getString("contenido"),object.getString("ruta"),object.getString("imagen"),object.getString("empresa"),object.getString("direccion"),object.getString("codigo"),object.getString("imagen2"));
-                    elementos.add(elemento1);
-                }
-            }catch(Exception e){
-            }
-            listaelementos.setAdapter(new NoticiaAdapter(getContext()));
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Todos los Cupones";
-                case 1:
-                    return "Descuentos";
-                case 2:
-                    return "Promociones";
-            }
-            return null;
-        }
-
-    }
-    private static class NoticiaAdapter extends BaseAdapter {
-        Context ctx;
-        LayoutInflater layoutInflater;
-        SmartImageView smartImageView;
-        //TextView fecha_v,titulo_v,empresa_v,ruta_v;
-        public NoticiaAdapter(Context applicationContext) {
-            this.ctx=applicationContext;
-            layoutInflater=(LayoutInflater)ctx.getSystemService(LAYOUT_INFLATER_SERVICE);
-        }
-        @Override
-        public int getCount() {
-            return elementos.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            smartImageView=null;
-            ViewGroup viewGroup=(ViewGroup)layoutInflater.inflate(R.layout.activity_main_item1,null);
-            //fecha_v=(TextView)viewGroup.findViewById(R.id.fech);
-            //titulo_v=(TextView)viewGroup.findViewById(R.id.tit);
-            //ruta_v=(TextView)viewGroup.findViewById(R.id.link);
-            //empresa_v=(TextView)viewGroup.findViewById(R.id.empresa);
-            smartImageView=(SmartImageView)viewGroup.findViewById(R.id.imagen1);
-            //fecha_v.setText(elementos.get(position).getFecha().toString());
-            //titulo_v.setText(elementos.get(position).getTitulo().toString());
-            //empresa_v.setText(elementos.get(position).getEmpresa().toString());
-            //ruta_v.setText("Generar Cupon");
-            Rect rect=new Rect(smartImageView.getLeft(),smartImageView.getTop(),smartImageView.getRight(),smartImageView.getBottom());
-            String url=elementos.get(position).getRuta().toString()+elementos.get(position).getImagen().toString();
-            smartImageView.setImageUrl(url,rect);
-            return viewGroup;
-        }
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast t = Toast.makeText(Lista.this,"No se logro abrir la base de datos local",Toast.LENGTH_SHORT);
+        t.show();
     }
 }

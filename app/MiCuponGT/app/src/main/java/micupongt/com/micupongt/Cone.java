@@ -1,6 +1,7 @@
 package micupongt.com.micupongt;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -36,9 +37,7 @@ public class Cone extends AsyncTask<JSONObject,Void,String> {
                 pw.close();
                 socket.close();
             }catch(IOException e){
-
             }
-
         }catch(Exception e){
             return respuesta;
         }

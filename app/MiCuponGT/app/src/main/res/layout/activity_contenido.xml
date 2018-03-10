@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#fff"
     tools:context="micupongt.com.micupongt.Contenido"
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp">
@@ -11,14 +12,16 @@
     <com.github.snowdream.android.widget.SmartImageView
         android:id="@+id/imagen2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_constraintTop_creator="0"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        tools:layout_constraintLeft_creator="0"
+        android:layout_height="match_parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="0dp" />
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="-15dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0" />
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
@@ -58,5 +61,6 @@
         android:layout_marginRight="16dp"
         android:text="Terminos y Condiciones"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="16dp" />
 </android.support.constraint.ConstraintLayout>

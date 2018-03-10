@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,120 +47,59 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class MainActivity extends AppCompatActivity {
-    ImageView inicio,olvido,crear;
-    EditText usuario;
-    EditText password;
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private GoogleApiClient googleApiClient;
+    private SignInButton signInButton;
+    public static final int SIGN_IN_CODE=777;
     String mandar_usuario;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        inicio=(ImageView)findViewById(R.id.imageView2);
-        olvido=(ImageView)findViewById(R.id.imageView3);
-        crear=(ImageView)findViewById(R.id.imageView4);
-        usuario=(EditText) findViewById(R.id.editText3);
-        password=(EditText)findViewById(R.id.editText4);
-        if(VerificarSesion()){
-            Intent i = new Intent(MainActivity.this, Lista.class);
-            startActivity(i);
-            finish();
-        }
-        inicio.setOnClickListener(new View.OnClickListener() {
+        signInButton=(SignInButton)findViewById(R.id.botongmail);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+        signInButton.setColorScheme(SignInButton.COLOR_DARK);
+        GoogleSignInOptions gso=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this,this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                .build();
+        signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(usuario.getText().toString().equals("")||password.getText().toString().equals("")){
-                    Toast t = Toast.makeText(MainActivity.this,"Uno de los campos esta vacio",Toast.LENGTH_SHORT);
-                    t.show();
-                }else{
-                    String respuesta="";
-                    try {
-                        Cone cone=new Cone();
-                        JSONObject datos =new JSONObject();
-                        datos.put("accion","login");
-                        datos.put("usuario",usuario.getText().toString());
-                        datos.put("password",password.getText().toString());
-                        respuesta = cone.execute(datos).get();
-                        if(respuesta.equals("True")){
-                            CrearSesion();
-                            Toast t = Toast.makeText(MainActivity.this,"Bienvenid@ "+usuario.getText().toString(),Toast.LENGTH_SHORT);
-                            t.show();
-                            Intent i = new Intent(MainActivity.this, Lista.class);
-                            startActivity(i);
-                            finish();
-                        }else{
-                            Toast t = Toast.makeText(MainActivity.this,"Usuario/Password incorrectos. Intenta de Nuevo",Toast.LENGTH_SHORT);
-                            t.show();
-                            usuario.setText("");
-                            password.setText("");
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        olvido.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogo_Recuperar recuperar=new Dialogo_Recuperar();
-                recuperar.show(getFragmentManager(),"TAg");
-
-            }
-        });
-        crear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast t = Toast.makeText(MainActivity.this,"Crear Cuenta",Toast.LENGTH_SHORT);
-                t.show();
-                Intent inici = new Intent(getApplicationContext(), Registro_Redes.class);
-                startActivity(inici);
-                finish();
+                Intent intent=Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(intent,SIGN_IN_CODE);
             }
         });
     }
-    public void CrearSesion(){
-        ConexionLocal usdbh =
-                new ConexionLocal(this, "DBUsuarios", null, 1);
 
-        SQLiteDatabase db = usdbh.getWritableDatabase();
-
-        //Si hemos abierto correctamente la base de datos
-        if(db != null) {
-            db.execSQL("INSERT INTO Usuario (usuario, password)VALUES ('" +usuario.getText().toString()+ "', '" +password.getText().toString() +"')");
-            db.close();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==SIGN_IN_CODE){
+            GoogleSignInResult result=Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+    private void handleSignInResult(GoogleSignInResult result) {
+        if(result.isSuccess()){
+            goMailScreen();
         }else{
-            Toast t = Toast.makeText(MainActivity.this,"No se logro abrir la base de datos local",Toast.LENGTH_SHORT);
+            Toast t = Toast.makeText(MainActivity.this,"No pudo iniciar sesion",Toast.LENGTH_SHORT);
             t.show();
         }
-
     }
-    public boolean VerificarSesion(){
-        boolean respuesta=false;
-        ConexionLocal usdbh =new ConexionLocal(this, "DBUsuarios", null, 1);
-        SQLiteDatabase db = usdbh.getWritableDatabase();
-        //Si hemos abierto correctamente la base de datos
-        if(db != null) {
-            Cursor c =db.rawQuery("SELECT * FROM Usuario",null);
-            if (c.moveToFirst()) {
-                //Recorremos el cursor hasta que no haya más registros
-                do {
-                    mandar_usuario= c.getString(0);
-                    respuesta=true;
-                } while(c.moveToNext());
-            }
-            db.close();
-        }else{
-            Toast t = Toast.makeText(MainActivity.this,"No se logro abrir la base de datos local",Toast.LENGTH_SHORT);
-            t.show();
-        }
-        return respuesta;
+    private void goMailScreen() {
+        Intent i = new Intent(this, Lista.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
     }
-
-
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast t = Toast.makeText(MainActivity.this,"Ocurrio un error",Toast.LENGTH_SHORT);
+        t.show();
+    }
 }
 

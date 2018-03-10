@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "625252252687",
+    "firebase_url": "https://micupongt.firebaseio.com",
+    "project_id": "micupongt",
+    "storage_bucket": "micupongt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:625252252687:android:75c2830b7491db0e",
+        "android_client_info": {
+          "package_name": "micupongt.com.micupongt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "625252252687-6bu7ec6hjjf93jbtlfptlijmu2n0ojgg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "micupongt.com.micupongt",
+            "certificate_hash": "c625b6803247ee40e890eb40a894b3bd57db17ed"
+          }
+        },
+        {
+          "client_id": "625252252687-va5ee5d361mdcufane0sdl3cvgo4cg04.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUjT5oDKwAf1Io1XBJsktYpXl00dhsfNU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "625252252687-va5ee5d361mdcufane0sdl3cvgo4cg04.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

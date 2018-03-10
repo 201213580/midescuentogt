@@ -23,9 +23,10 @@ def recuperar_clave(correo):
 		#el correo no esta registrado en la base de datos
 		print "rayos"
 	return respuesta
-def registro(nombre,usuario,correo,contra):
+def registro(tipo,nombre,usuario,correo,contra):
 	respuesta="False\r \n"
 	consulta="call Crear_Usuarios('"+nombre+"','"+usuario+"','"+correo+"','"+contra+"')"
+	print 'Se verifica este '+correo
 	verificar="call verificacion_correo('"+correo+"')"
 	verificar2="call verificar_usuario('"+usuario+"')"
 	if consultaSQL(verificar):
@@ -38,14 +39,17 @@ def registro(nombre,usuario,correo,contra):
 		else:
 			if registroSQL(consulta):
 				respuesta="True\r \n"
-				enviar_correo(usuario,contra);
+				enviar_correo(tipo,usuario,contra);
 	return respuesta
 def generar_codigo(id_promocion,id_usuario):
 	meses=['E','F','M','A','Y','J','L','G','S','C','N','B']
 	dia=time.strftime("%d")
 	mes=time.strftime("%m")
+	anio=time.strftime("%y")
 	substring=int(dia)+int(mes)
 	codigo=str(meses[int(mes)-1])+str(id_usuario)+str(id_promocion)+str(substring)
+	consulta="call cargar_codigo('"+codigo+"',0,'"+str(anio)+"-"+str(mes)+"-"+str(dia)+"',"+str(id_promocion)+","+str(id_usuario)+")"
+	respuesta=consultaCodigo(consulta)
 	return codigo
 def obtener_id(usuario):
 	consulta="call obtener_id('"+usuario+"')"
@@ -97,11 +101,13 @@ def recibir_datos():
 			conn.send(respuesta)
 			conn.close()
 		elif j['accion']=="registro":
-			respuesta=registro(j['nombre'],j['usuario'],j['correo'],j['contra'])
+			print 'llego aca'
+			respuesta=registro(j['tipo'],j['nombre'],j['usuario'],j['correo'],j['contra'])
 			#print respuesta
 			conn.send(respuesta)
 			conn.close()
 		elif j['accion']=="cargar":
+			print j['usu_sesion']
 			respuesta=cargar(j['usu_sesion'])
 			#print respuesta
 			conn.send(respuesta)
