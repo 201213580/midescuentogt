@@ -1,5 +1,6 @@
 package micupongt.com.micupongt;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -27,7 +28,7 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 /**
  * Created by anton on 21/01/2018.
  */
-
+@SuppressLint("ValidFragment")
 public class Fragment1 extends Fragment {
     static ListView listaelementos;
     static ArrayList<Contenedor> elementos=new ArrayList<Contenedor>();
@@ -35,6 +36,7 @@ public class Fragment1 extends Fragment {
     public Fragment1(String usuario){
         this.usuario=usuario;
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

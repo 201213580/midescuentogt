@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:text="Ingresar Direccion" />
+
+    <EditText
+        android:id="@+id/editText4"
+        android:layout_width="295dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView11"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="51dp"
+        android:ems="10"
+
+        android:hint="Ingresar Direccion*"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText4"
+        android:layout_alignStart="@+id/editText4"
+        android:layout_below="@+id/textView11"
+        android:layout_marginTop="29dp"
+        android:textColor="#000"
+        android:textSize="15dp"
+        android:text="Direccion 1*" />
+
+    <EditText
+        android:id="@+id/editText6"
+        android:layout_width="295dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText4"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="Referencia*"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText6"
+        android:layout_alignStart="@+id/editText6"
+        android:layout_below="@+id/editText6"
+        android:layout_marginTop="43dp"
+        android:textColor="#000"
+        android:text="Direccion 2(Opcional)" />
+
+    <EditText
+        android:id="@+id/editText7"
+        android:layout_width="295dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView13"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Ingresar Direccion 2" />
+
+    <EditText
+        android:id="@+id/editText8"
+        android:layout_width="295dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText7"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Referencia" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText8"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:text="Siguiente" />
+
+</RelativeLayout>
