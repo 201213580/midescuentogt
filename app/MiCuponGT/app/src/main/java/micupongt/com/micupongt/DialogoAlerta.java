@@ -12,7 +12,7 @@ import android.support.v7.app.AlertDialog;
 
 public class DialogoAlerta extends DialogFragment {
     String Mensaje;
-
+    String Titulo;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -20,7 +20,7 @@ public class DialogoAlerta extends DialogFragment {
                 new AlertDialog.Builder(getActivity());
 
         builder.setMessage(Mensaje)
-                .setTitle("Información")
+                .setTitle(Titulo)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -32,5 +32,8 @@ public class DialogoAlerta extends DialogFragment {
 
     public void setMensaje(String mensaje) {
         Mensaje = mensaje;
+    }
+    public void setTitulo(String titulo) {
+        Titulo = titulo;
     }
 }
