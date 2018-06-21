@@ -19,36 +19,35 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `micupongt`
 --
-
 DELIMITER $$
 --
 -- Procedimientos
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `cargar_codigo` (IN `Codi` VARCHAR(255), IN `Esta` INT, IN `Fech` DATE, IN `Promo` INT, IN `Usu` INT)  NO SQL
+CREATE PROCEDURE `cargar_codigo` (IN `Codi` VARCHAR(255), IN `Esta` INT, IN `Fech` DATE, IN `Promo` INT, IN `Usu` INT)  NO SQL
 INSERT INTO `usuario_promocion`(`Codigo`, `Estado`, `Fecha`, `Promocion_id_promocion`, `Usuario_Id`) VALUES (Codi,Esta,Fech,Promo,Usu)$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Crear_Usuarios` (IN `Nom` VARCHAR(255), IN `Usu` VARCHAR(255), IN `Corre` VARCHAR(255), IN `Contr` VARCHAR(255))  NO SQL
+CREATE PROCEDURE `Crear_Usuarios` (IN `Nom` VARCHAR(255), IN `Usu` VARCHAR(255), IN `Corre` VARCHAR(255), IN `Contr` VARCHAR(255))  NO SQL
 insert into usuario(Nombre,Usuario,Correo,Contra)values(Nom,Usu,Corre,Contr)$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `login` (IN `usu` VARCHAR(255), IN `contra` VARCHAR(255))  NO SQL
+CREATE PROCEDURE `login` (IN `usu` VARCHAR(255), IN `contra` VARCHAR(255))  NO SQL
 select 1 from usuario where usuario=usu and Contra=contra$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_id` (IN `usu` VARCHAR(255))  NO SQL
+CREATE PROCEDURE `obtener_id` (IN `usu` VARCHAR(255))  NO SQL
 SELECT Id_Usuario FROM `usuario` WHERE Usuario=usu$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `promocion` ()  NO SQL
+CREATE PROCEDURE `promocion` ()  NO SQL
 select * from promocion$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `promocion_contenido` (IN `t` INT)  NO SQL
+CREATE PROCEDURE `promocion_contenido` (IN `t` INT)  NO SQL
 select * from promocion where tipo=t$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `recuperar` (IN `corr` VARCHAR(255))  NO SQL
+CREATE PROCEDURE `recuperar` (IN `corr` VARCHAR(255))  NO SQL
 select * from usuario where correo=corr$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `verificacion_correo` (IN `corr` VARCHAR(255))  NO SQL
+CREATE PROCEDURE `verificacion_correo` (IN `corr` VARCHAR(255))  NO SQL
 Select 1 from usuario where Correo=corr$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `verificar_usuario` (IN `usu` VARCHAR(255))  NO SQL
+CREATE PROCEDURE `verificar_usuario` (IN `usu` VARCHAR(255))  NO SQL
 Select 1 from usuario where Usuario=usu$$
 
 DELIMITER ;
@@ -78,13 +77,13 @@ CREATE TABLE `promocion` (
 --
 
 INSERT INTO `promocion` (`id_promocion`, `fecha`, `titulo`, `contenido`, `ruta`, `imagen`, `nombre_empresa`, `direccion`, `region`, `imagen2`, `tipo`) VALUES
-(1, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://192.168.0.13/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 1),
-(2, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://192.168.0.13/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 1),
-(3, 'Valido hasta 12-12-2017', 'Chilero y Rustico', 'Descuento del 10% en productos seleccionados', 'http://192.168.0.13/recursos/', '1.png', 'Chilero y Rustico', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
-(4, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://192.168.0.13/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
-(5, 'Valido hasta 12-12-2017', 'Chilero y Rustico', 'Descuento del 10% en productos seleccionados', 'http://192.168.0.13/recursos/', '1.png', 'Chilero y Rustico', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
-(6, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://192.168.0.13/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
-(7, 'Valido hasta 12-12-2017', 'Chilero y Rustico', 'Descuento del 10% en productos seleccionados', 'http://192.168.0.13/recursos/', '1.png', 'Chilero y Rustico', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 2);
+(1, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://18.216.161.45/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 1),
+(2, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://18.216.161.45/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 1),
+(3, 'Valido hasta 12-12-2017', 'Chilero y Rustico', 'Descuento del 10% en productos seleccionados', 'http://18.216.161.45/recursos/', '1.png', 'Chilero y Rustico', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
+(4, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://18.216.161.45/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
+(5, 'Valido hasta 12-12-2017', 'Chilero y Rustico', 'Descuento del 10% en productos seleccionados', 'http://18.216.161.45/recursos/', '1.png', 'Chilero y Rustico', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
+(6, 'Valido hasta 12-12-2017', 'La Casa del Agricultor', 'Descuento del 10% en productos seleccionados', 'http://18.216.161.45/recursos/', 'descarga.jpg', 'La casa del Agricultor', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 0),
+(7, 'Valido hasta 12-12-2017', 'Chilero y Rustico', 'Descuento del 10% en productos seleccionados', 'http://18.216.161.45/recursos/', '1.png', 'Chilero y Rustico', 'San Pedro Sac. San Marcos', 0, 'agricultor2.jpg', 2);
 
 -- --------------------------------------------------------
 
