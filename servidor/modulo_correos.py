@@ -102,7 +102,7 @@ def enviar_recuperacion(nombre,usuario,correo,contra):
     mime_message["From"] = from_address
     mime_message["To"] = to_address
     mime_message["Subject"] = "RECUPERAR DATOS"
-    smtp = SMTP("smtp.gmail.com:587")
+    smtp = SMTP("smtp.gmail.com:25")
     smtp.starttls()
     smtp.login(from_address, "Manuel5897-")
     smtp.sendmail(from_address, to_address, mime_message.as_string())
@@ -283,7 +283,7 @@ def enviar_correo(tipo,usuario,contra):
     mime_message["From"] = from_address
     mime_message["To"] = to_address
     mime_message["Subject"] = "Registro MiCuponGt"
-    smtp = SMTP("smtp.gmail.com:587")
+    smtp = SMTP("smtp.gmail.com:25")
     smtp.starttls()
     smtp.login(from_address, "Manuel5897-")
     smtp.sendmail(from_address, to_address, mime_message.as_string())

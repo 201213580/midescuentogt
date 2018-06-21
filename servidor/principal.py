@@ -82,7 +82,7 @@ def carga_contenido(usuario,tipo):
 	#print my_json_string+"\r \n"
 	return my_json_string
 def recibir_datos():
-	HOST = "172.31.14.196" #local host
+	HOST = "172.31.41.229" #local host
 	#HOST = "190.148.250.130" #local host
 	PORT = 7000 #open port 7000 for connection
 	s = socket(AF_INET, SOCK_STREAM)
