@@ -15,12 +15,32 @@
       },
       "oauth_client": [
         {
-          "client_id": "625252252687-6bu7ec6hjjf93jbtlfptlijmu2n0ojgg.apps.googleusercontent.com",
+          "client_id": "625252252687-6o6aofqb9b5m8p1qssmb3o4tue6tpjgh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "micupongt.com.micupongt",
+            "certificate_hash": "d3646a8887b7db9fadf6d1bc1f0593818b28ad4c"
+          }
+        },
+        {
+          "client_id": "625252252687-cg86mn6bjt99kdsfc2vapq3sd8tahlum.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "micupongt.com.micupongt",
             "certificate_hash": "c625b6803247ee40e890eb40a894b3bd57db17ed"
           }
+        },
+        {
+          "client_id": "625252252687-2790jfqd6hpf39q7t4dgt86nt4eg13to.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "micupongt.com.micupongt",
+            "certificate_hash": "7776fd1d631f88e396b973594686a9d9e1965b05"
+          }
+        },
+        {
+          "client_id": "625252252687-va5ee5d361mdcufane0sdl3cvgo4cg04.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "625252252687-va5ee5d361mdcufane0sdl3cvgo4cg04.apps.googleusercontent.com",
